@@ -33,7 +33,7 @@ private:
     M_Node* m_root;
 public:
     BinaryTree();
-    BinaryTree(const T& item);
+    BinaryTree(T item);
     BinaryTree(T* items, int count);
     BinaryTree(BinaryTree<T>& another);
 
@@ -41,23 +41,35 @@ public:
 
 
     M_Node* getNode(T& item);
+    bool searchItem(T& item);
+    bool searchItem(T&& item);
+    bool searchTree(BinaryTree<T>& source);
     BinaryTree<T>& insert(T& item);
     BinaryTree<T>& insert(T&& item);
-    BinaryTree<T>* remove(int item);
-
-    BinaryTree<T>& preOrderTravers(const M_Node* nodeRoot, std::function<void(T)> func);
-
+    BinaryTree<T>* remove(T& item);
+    BinaryTree<T>* remove(T&& item);
+    BinaryTree<T>* map(T (*function)(const T& item));
+    BinaryTree<T>* filter(bool (*function)(const T& item));
+    BinaryTree<T>* cutTree(T& item);
+    T reduce(T (*function)(const T& previousValue, const T& currentValue));
 
     const M_Node& getRoot();
-    int getMaxDepth() const { return m_root ? m_root->maxDepth() : 0; }
+    int getMaxDepth() const;
 
 private:
+    BinaryTree<T>& insert(M_Node* node, M_Node* parent, T& item);
     M_Node* getLocalMax(M_Node* root);
+    bool searchTreeDev(M_Node* destinationRoot, M_Node* sourceRoot);
     BinaryTree<T>& removeNode(M_Node* target);
+    BinaryTree<T>& preOrderTravers(const M_Node* nodeRoot, std::function<void(T)> func);
+    M_Node* rightRotate(M_Node* y);
+    M_Node* leftRotate(M_Node* x);
+    int getBalance(M_Node* Node);
 
 //
 //          OUTPUT
 //
+
 private:
 
     struct cellDisplay {

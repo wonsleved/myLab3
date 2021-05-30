@@ -1,8 +1,9 @@
 //
 //      NODE STRUCT FROM BINARY TREE
 //
+
 template <typename T>
-BinaryTree<T>::M_Node::M_Node() : parent(nullptr), leftChild(nullptr), rightChild(nullptr) {};
+BinaryTree<T>::M_Node::M_Node() : parent(nullptr), leftChild(nullptr), rightChild(nullptr), data(1) {};
 template <typename T>
 BinaryTree<T>::M_Node::M_Node(M_Node* parent, const T& data) : data(data), parent(parent), leftChild(nullptr), rightChild(nullptr) {};
 template <typename T>
@@ -24,7 +25,7 @@ template <typename T>
 BinaryTree<T>::BinaryTree() : m_root(nullptr) {};
 
 template <typename T>
-BinaryTree<T>::BinaryTree(const T& item) : BinaryTree() {
+BinaryTree<T>::BinaryTree(T item) : BinaryTree() {
     insert(item);
 }
 
@@ -47,16 +48,6 @@ BinaryTree<T>::~BinaryTree() {
 }
 
 template <typename T>
-BinaryTree<T>& BinaryTree<T>::preOrderTravers(const M_Node* nodeRoot, std::function<void(T)> func) {
-    if (nodeRoot) {
-        func(nodeRoot->data);
-        preOrderTravers(nodeRoot->leftChild, func);
-        preOrderTravers(nodeRoot->rightChild, func);
-    }
-    return *this;
-}
-
-template <typename T>
 BinaryTree<T>& BinaryTree<T>::insert(T& item) {
     if (!m_root) {
         m_root = new BinaryTree::M_Node(nullptr, item);
@@ -69,6 +60,7 @@ BinaryTree<T>& BinaryTree<T>::insert(T& item) {
                     continue;
                 } else {
                     tmp->rightChild = new BinaryTree::M_Node(tmp, item);
+                    //
                     return *this;
                 }
             } else if (item < tmp->data) {
@@ -77,6 +69,7 @@ BinaryTree<T>& BinaryTree<T>::insert(T& item) {
                     continue;
                 } else {
                     tmp->leftChild = new BinaryTree::M_Node(tmp, item);
+                    //
                     return *this;
                 }
             } else {
@@ -84,9 +77,47 @@ BinaryTree<T>& BinaryTree<T>::insert(T& item) {
             }
         }
     }
-
-
+    // is Balanced
     return *this;
+}
+
+template <typename T>
+BinaryTree<T>& BinaryTree<T>::insert(M_Node* node, M_Node* parent,T& item) {
+    if (!node)
+        return new BinaryTree::M_Node(parent, item);
+
+    if (item < node->data)
+        node->leftChild = insert(node->leftChild, node, item);
+    else if (item > node->data)
+        node->rightChild = insert(node->rightChild, node, item);
+    else
+        throw(Exceptions(ExceptionConsts::ITEM_EXISTS));
+
+    int balance = getBalance(node);
+
+    // Left Left Case
+    if (balance > 1 && item < node->left->key)
+        return rightRotate(node);
+
+    // Right Right Case
+    if (balance < -1 && item > node->right->key)
+        return leftRotate(node);
+
+    // Left Right Case
+    if (balance > 1 && item > node->left->key)
+    {
+        node->left = leftRotate(node->left);
+        return rightRotate(node);
+    }
+
+    // Right Left Case
+    if (balance < -1 && item < node->right->key)
+    {
+        node->right = rightRotate(node->right);
+        return leftRotate(node);
+    }
+
+    return node;
 }
 
 template <typename T>
@@ -97,12 +128,49 @@ BinaryTree<T>& BinaryTree<T>::insert(T&& item) {
 }
 
 template <typename T>
-BinaryTree<T>* BinaryTree<T>::remove(int item) { // If element wasn't found
+BinaryTree<T>* BinaryTree<T>::remove(T& item) { // If element wasn't found
     M_Node* node = getNode(item);
     if (!node)
         return nullptr;
     removeNode(node);
     return this;
+}
+
+template <typename T>
+BinaryTree<T>* BinaryTree<T>::remove(T&& item) { // If element wasn't found
+    return remove(item);
+}
+
+template <typename T>
+BinaryTree<T>* BinaryTree<T>::map(T (*function)(const T& item)) {
+    BinaryTree<T>* result = new BinaryTree;
+    preOrderTravers(m_root, [result, function](T item){
+        result->insert(function(item));
+    });
+    return result;
+}
+
+template <typename T>
+BinaryTree<T>* BinaryTree<T>::filter(bool (*function)(const T& item)) {
+    BinaryTree<T>* result = new BinaryTree;
+    preOrderTravers(m_root, [result, function](T item){
+        if (function(item))
+            result->insert(item);
+    });
+    return result;
+}
+
+template <typename T>
+BinaryTree<T>* BinaryTree<T>::cutTree(T& item) {
+    M_Node* node = getNode(item);
+    if (node == nullptr)
+        return nullptr;
+    BinaryTree<T>* result = new BinaryTree<T>;
+    preOrderTravers(node, [&result](T item){
+        result->insert(item);
+    });
+
+    return result;
 }
 
 template <typename T>
@@ -123,9 +191,78 @@ typename BinaryTree<T>::M_Node* BinaryTree<T>::getNode(T& item) {
 }
 
 template <typename T>
+bool BinaryTree<T>::searchItem(T& item) {
+    if (getNode(item))
+        return true;
+    else
+        return false;
+}
+
+template <typename T>
+bool BinaryTree<T>::searchItem(T&& item) {
+    return searchItem(item);
+}
+
+template <typename T>
+bool BinaryTree<T>::searchTree(BinaryTree<T>& source) {
+    return searchTreeDev(this->m_root, source.m_root);
+}
+
+template <typename T>
+bool BinaryTree<T>::searchTreeDev(M_Node* destinationRoot, M_Node* sourceRoot) {
+    bool result;
+    if (sourceRoot == nullptr) {
+        return true;
+    }
+    else if ((destinationRoot == nullptr)) {
+        return false;
+    }
+    else {
+        if (destinationRoot->data == sourceRoot->data) {
+            if (
+                    searchTreeDev(destinationRoot->leftChild, sourceRoot->leftChild) &&
+                    searchTreeDev(destinationRoot->rightChild, sourceRoot->rightChild))
+            {
+                return true;
+            }
+        }
+        result = searchTreeDev(destinationRoot->leftChild, sourceRoot) ||
+                 searchTreeDev(destinationRoot->rightChild, sourceRoot);
+    }
+    return result;
+}
+
+
+template <typename T>
+T BinaryTree<T>::reduce(T (*function)(const T& previousValue, const T& currentValue)) {
+    T result;
+    bool flag = false;
+
+    preOrderTravers(m_root, [&result, &flag, function](T item){
+        if(flag) {
+            result = function(result, item);
+        } else {
+            result = item;
+            flag = true;
+        }
+    });
+
+    return result;
+}
+
+template <typename T>
 const typename BinaryTree<T>::M_Node& BinaryTree<T>::getRoot() {
     return *m_root;
 }
+
+template <typename T>
+int BinaryTree<T>::getMaxDepth() const {
+    return m_root ? m_root->maxDepth() : 0;
+}
+
+//
+//          PRIVATE
+//
 
 template <typename T>
 BinaryTree<T>& BinaryTree<T>::removeNode(M_Node* target) {
@@ -137,7 +274,6 @@ BinaryTree<T>& BinaryTree<T>::removeNode(M_Node* target) {
         return *this;
     } else if (target->leftChild) {
         if (target == target->parent->leftChild) {
-            std::cout << "ok" << std::endl;
             target->parent->leftChild = target->leftChild;
         } else {
             target->parent->rightChild = target->leftChild;
@@ -167,6 +303,52 @@ typename BinaryTree<T>::M_Node* BinaryTree<T>::getLocalMax(M_Node* root) {
         tmp = tmp->rightChild;
     return tmp;
 }
+
+template <typename T>
+BinaryTree<T>& BinaryTree<T>::preOrderTravers(const M_Node* nodeRoot, std::function<void(T)> func) {
+    if (nodeRoot) {
+        func(nodeRoot->data);
+        preOrderTravers(nodeRoot->leftChild, func);
+        preOrderTravers(nodeRoot->rightChild, func);
+    }
+    return *this;
+}
+
+template <typename T>
+typename BinaryTree<T>::M_Node* BinaryTree<T>::leftRotate(M_Node* x) {
+    x->rightChild->parent = x->parent;
+    x->parent = x->rightChild;
+    x->rightChild = x->rightChild->leftChild;
+    x->parent->leftChild = x;
+    return x->parent;
+}
+
+template <typename T>
+typename BinaryTree<T>::M_Node* BinaryTree<T>::rightRotate(M_Node* y) {
+    y->leftChild->parent = y->parent;
+    y->parent = y->leftChild;
+    y->leftChild = y->leftChild->rightChild;
+    y->parent->rightChild = y;
+
+    return y->parent;
+}
+
+template <typename T>
+int BinaryTree<T>::getBalance(M_Node* node) {
+    if (node == nullptr)
+        return 0;
+    if (!node->rightChild && !node->leftChild)
+        return 0;
+    if (!node->rightChild)
+        return - node->leftChild->maxDepth();
+    if (!node->leftChild)
+        return node->rightChild->maxDepth();
+    return node->rightChild->maxDepth() - node->leftChild->maxDepth();
+}
+
+//
+//          OPERATOR OVERLOADING
+//
 
 template <typename T>
 std::ostream& operator<< (std::ostream& out, BinaryTree<T>& tree) {
@@ -257,7 +439,7 @@ template <typename T>
 vector<string> BinaryTree<T>::rowFormatter(const displayRows& rowsDisp) const {
     using s_t = string::size_type;
 
-    // First find the maximum value string length and put it in cellWidth
+    // First searchItem the maximum value string length and put it in cellWidth
     s_t cellWidth = 0;
     for(const auto& rowDisp : rowsDisp) {
         for(const auto& cd : rowDisp) {
