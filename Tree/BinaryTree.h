@@ -55,16 +55,22 @@ public:
 
     const M_Node& getRoot();
     int getMaxDepth() const;
+    BinaryTree<T>* writeToFile(std::string& path);
+    BinaryTree<T>* writeToFile(std::string&& path);
+    BinaryTree<T>* insertFromFile(std::string& path);
+    BinaryTree<T>* insertFromFile(std::string&& path);
 
 private:
-    BinaryTree<T>& insert(M_Node* node, M_Node* parent, T& item);
+    M_Node* insert(M_Node* node, M_Node* parent, T& item);
     M_Node* getLocalMax(M_Node* root);
     bool searchTreeDev(M_Node* destinationRoot, M_Node* sourceRoot);
-    BinaryTree<T>& removeNode(M_Node* target);
+    M_Node* removeNode(M_Node* target, T& item);
     BinaryTree<T>& preOrderTravers(const M_Node* nodeRoot, std::function<void(T)> func);
     M_Node* rightRotate(M_Node* y);
     M_Node* leftRotate(M_Node* x);
     int getBalance(M_Node* Node);
+    M_Node* minValueNode(M_Node* node);
+
 
 //
 //          OUTPUT

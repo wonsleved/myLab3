@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include "Tree/BinaryTree.h"
 
 int mop(const int& item) {
@@ -13,22 +14,18 @@ int red(const int& prev, const int& cur) {
 }
 
 int main() {
-    int* a = new int[8] {3, 2, 1, 4, 5, -10, 0, 11};
-    try {
-        BinaryTree<int> test(a, 8);
+    int* a = new int[12] {1, 2, 3, 4, 5, -10, 0, 11, -3, 33, 13, -99};
 
-        std::cout << test << std::endl;
-
-        int aa = 2;
-        BinaryTree<int>* s = test.cutTree(aa);
-
-        std::cout << *s << std::endl;
+    BinaryTree<int> test(a, 12);
+    test.writeToFile("test.data");
+    std::cout << test << std::endl;
 
 
-        delete s;
-    } catch(Exceptions& Exception) {
-        Exception.getError();
-    }
+    BinaryTree<int> test2;
+
+    test2.insertFromFile("test.data");
+
+    std::cout << test2 << std::endl;
 
     delete[] a;
 

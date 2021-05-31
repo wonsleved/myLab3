@@ -52,39 +52,16 @@ BinaryTree<T>& BinaryTree<T>::insert(T& item) {
     if (!m_root) {
         m_root = new BinaryTree::M_Node(nullptr, item);
     } else {
-        M_Node* tmp = m_root;
-        while(tmp) {
-            if (item > tmp->data) {
-                if (tmp->rightChild) {
-                    tmp = tmp->rightChild;
-                    continue;
-                } else {
-                    tmp->rightChild = new BinaryTree::M_Node(tmp, item);
-                    //
-                    return *this;
-                }
-            } else if (item < tmp->data) {
-                if (tmp->leftChild) {
-                    tmp = tmp->leftChild;
-                    continue;
-                } else {
-                    tmp->leftChild = new BinaryTree::M_Node(tmp, item);
-                    //
-                    return *this;
-                }
-            } else {
-                throw(Exceptions(ExceptionConsts::ITEM_EXISTS));
-            }
-        }
+        insert(m_root, nullptr, item);
     }
     // is Balanced
     return *this;
 }
 
 template <typename T>
-BinaryTree<T>& BinaryTree<T>::insert(M_Node* node, M_Node* parent,T& item) {
+typename BinaryTree<T>::M_Node* BinaryTree<T>::insert(M_Node* node, M_Node* parent,T& item) {
     if (!node)
-        return new BinaryTree::M_Node(parent, item);
+        return new M_Node(parent, item);
 
     if (item < node->data)
         node->leftChild = insert(node->leftChild, node, item);
@@ -96,25 +73,29 @@ BinaryTree<T>& BinaryTree<T>::insert(M_Node* node, M_Node* parent,T& item) {
     int balance = getBalance(node);
 
     // Left Left Case
-    if (balance > 1 && item < node->left->key)
-        return rightRotate(node);
+    if (balance > 1 && item < node->rightChild->data) {
+        node->rightChild = rightRotate(node->rightChild);
+        return leftRotate(node);
+    }
 
     // Right Right Case
-    if (balance < -1 && item > node->right->key)
-        return leftRotate(node);
-
-    // Left Right Case
-    if (balance > 1 && item > node->left->key)
-    {
-        node->left = leftRotate(node->left);
+    if (balance < -1 && item > node->leftChild->data) {
+        node->leftChild = leftRotate(node->leftChild);
         return rightRotate(node);
     }
 
-    // Right Left Case
-    if (balance < -1 && item < node->right->key)
+    // Left Right Case
+    if (balance > 1 && item > node->rightChild->data)
     {
-        node->right = rightRotate(node->right);
+//        node->rightChild = leftRotate(node->rightChild);
         return leftRotate(node);
+    }
+
+    // Right Left Case
+    if (balance < -1 && item < node->leftChild->data)
+    {
+//        node->leftChild = rightRotate(node->leftChild);
+        return rightRotate(node);
     }
 
     return node;
@@ -129,10 +110,10 @@ BinaryTree<T>& BinaryTree<T>::insert(T&& item) {
 
 template <typename T>
 BinaryTree<T>* BinaryTree<T>::remove(T& item) { // If element wasn't found
-    M_Node* node = getNode(item);
-    if (!node)
-        return nullptr;
-    removeNode(node);
+//    M_Node* node = getNode(item);
+//    if (!node)
+//        return nullptr;
+    removeNode(m_root, item);
     return this;
 }
 
@@ -256,44 +237,153 @@ const typename BinaryTree<T>::M_Node& BinaryTree<T>::getRoot() {
 }
 
 template <typename T>
+typename BinaryTree<T>::M_Node* BinaryTree<T>::minValueNode(M_Node* node) {
+    M_Node* current = node;
+    while (current->leftChild != nullptr)
+        current = current->leftChild;
+
+    return current;
+}
+
+template <typename T>
 int BinaryTree<T>::getMaxDepth() const {
     return m_root ? m_root->maxDepth() : 0;
 }
+
+template <typename T>
+BinaryTree<T>* BinaryTree<T>::writeToFile(std::string& path) {
+    std::ofstream wf(path, std::ios::out | std::ios::binary);
+    if(!wf) {
+        std::cout << "Cannot open file!" << std::endl; // throw exc
+        return nullptr;
+    }
+    preOrderTravers(m_root, [&wf](T item){
+        std::cout << item << std::endl; // trow exc
+        wf.write((char *)& item, sizeof(T));
+    });
+    wf.close();
+    if(!wf.good()) {
+        std::cout << "Error occurred at writing time!" << std::endl; // trow exc
+        return nullptr;
+    }
+    return this;
+}
+
+template <typename T>
+BinaryTree<T>* BinaryTree<T>::writeToFile(std::string&& path) {
+    return writeToFile(path);
+}
+
+template <typename T>
+BinaryTree<T>* BinaryTree<T>::insertFromFile(std::string& path) {
+    std::ifstream rf(path, std::ios::out | std::ios::binary);
+    if(!rf) {
+        std::cout << "Cannot open file!" << std::endl;
+        return nullptr;
+    }
+
+    rf.seekg(0, rf.end); // or rf.end
+    int length = rf.tellg();
+    rf.seekg(0, rf.beg);
+
+    T* tmp = new T;
+
+
+    while (length > 0) {
+        rf.read((char *) tmp, sizeof(T));
+        std::cout << *tmp << std::endl;
+        insert(*tmp);
+        length -= sizeof(T);
+    }
+    delete tmp;
+
+
+    rf.close();
+    if(!rf.good()) {
+        std::cout << "Error occurred at reading time!" << std::endl;
+        return nullptr;
+    }
+    return this;
+}
+
+
+
+template <typename T>
+BinaryTree<T>* BinaryTree<T>::insertFromFile(std::string&& path) {
+    return insertFromFile(path);
+}
+
 
 //
 //          PRIVATE
 //
 
 template <typename T>
-BinaryTree<T>& BinaryTree<T>::removeNode(M_Node* target) {
-    if (target->leftChild && target->rightChild) {
-        M_Node* localMax = getLocalMax(target->leftChild);
+typename BinaryTree<T>::M_Node* BinaryTree<T>::removeNode(M_Node* target, T& item) {
+    if (target == nullptr)
+        return target;
 
-        target->data = localMax->data;
-        removeNode(localMax);
-        return *this;
-    } else if (target->leftChild) {
-        if (target == target->parent->leftChild) {
-            target->parent->leftChild = target->leftChild;
-        } else {
-            target->parent->rightChild = target->leftChild;
+    if ( item < target->data )
+        target->leftChild = removeNode(target->leftChild, item);
+    else if( item > target->data )
+        target->rightChild = removeNode(target->rightChild, item);
+    else
+    {
+        if( (target->leftChild == nullptr) ||
+            (target->rightChild == nullptr) )
+        {
+            M_Node *temp = target->leftChild ?
+                         target->leftChild :
+                         target->rightChild;
+
+            if (temp == nullptr)
+            {
+                temp = target;
+                target = nullptr;
+            }
+            else {
+                *target = *temp;
+                target->leftChild = target->rightChild = nullptr;
+                delete target;
+            }
         }
-    } else if (target->rightChild) {
-        if (target == target->parent->leftChild) {
-            target->parent->leftChild = target->rightChild;
-        } else {
-            target->parent->rightChild = target->rightChild;
-        }
-    } else {
-        if (target == target->parent->leftChild) {
-            target->parent->leftChild = nullptr;
-        } else {
-            target->parent->rightChild = nullptr;
+        else
+        {
+            M_Node* temp = minValueNode(target->rightChild);
+            target->data = temp->data;
+            target->rightChild = removeNode(target->rightChild,
+                                     temp->data);
         }
     }
-    target->rightChild = target->leftChild = nullptr;
-    delete target;
-    return *this;
+    if (target == nullptr)
+        return target;
+    int balance = getBalance(target);
+
+    // Left Left Case
+    if (balance > 1 && item < target->rightChild->data) {
+        target->rightChild = rightRotate(target->rightChild);
+        return leftRotate(target);
+    }
+
+    // Right Right Case
+    if (balance < -1 && item > target->leftChild->data) {
+        target->leftChild = leftRotate(target->leftChild);
+        return rightRotate(target);
+    }
+
+    // Left Right Case
+    if (balance > 1 && item > target->rightChild->data)
+    {
+        return leftRotate(target);
+    }
+
+    // Right Left Case
+    if (balance < -1 && item < target->leftChild->data)
+    {
+        return rightRotate(target);
+    }
+
+    return target;
 }
 
 template <typename T>
@@ -316,6 +406,8 @@ BinaryTree<T>& BinaryTree<T>::preOrderTravers(const M_Node* nodeRoot, std::funct
 
 template <typename T>
 typename BinaryTree<T>::M_Node* BinaryTree<T>::leftRotate(M_Node* x) {
+    if (x->parent == nullptr)
+        m_root = x->rightChild;
     x->rightChild->parent = x->parent;
     x->parent = x->rightChild;
     x->rightChild = x->rightChild->leftChild;
@@ -325,6 +417,8 @@ typename BinaryTree<T>::M_Node* BinaryTree<T>::leftRotate(M_Node* x) {
 
 template <typename T>
 typename BinaryTree<T>::M_Node* BinaryTree<T>::rightRotate(M_Node* y) {
+    if (y->parent == nullptr)
+        m_root = y->leftChild;
     y->leftChild->parent = y->parent;
     y->parent = y->leftChild;
     y->leftChild = y->leftChild->rightChild;
