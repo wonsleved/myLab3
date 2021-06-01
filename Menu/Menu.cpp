@@ -72,7 +72,7 @@ void menu() {
                 break;
             }
             case (2): {
-//                binaryTreeMenu();
+                binaryTreeMenu();
                 break;
             }
             default:
@@ -80,6 +80,11 @@ void menu() {
         }
     }
 }
+
+
+//
+//          HEAP
+//
 
 void heapMenu() {
     std::vector<Heap<int>*> intHeap;
@@ -165,8 +170,8 @@ void heapMenuInt(std::vector<Heap<int>*>& intHeap) {
                     break;
                 }
                 std::cout << "\tYou have " << intHeap.size()
-                << " heaps. Choose the index of heap to print"
-                << std::endl;
+                          << " heaps. Choose the index of heap to print"
+                          << std::endl;
                 std::cout << "\t\t: ";
                 int index = getInt(0, intHeap.size() - 1);
 
@@ -467,7 +472,7 @@ void heapIntOperations(Heap<int>* heap, std::vector<Heap<int>*>& intHeap) {
             else {
                 std::cout << "\tResult: " << std::endl;
                 std::cout << *result << std::endl;
-                std::cout << "Save this heap?" << std::endl;
+                std::cout << "\tSave this heap?" << std::endl;
                 std::cout << "\t\t1| Yes\n"
                           << "\t\t0| No\n";
                 std::cout << "\t\t: ";
@@ -475,6 +480,8 @@ void heapIntOperations(Heap<int>* heap, std::vector<Heap<int>*>& intHeap) {
                 if (choice) {
                     intHeap.emplace_back(result);
                     std::cout << "\t\t\x1B[92mSuccess\033[0m" << std::endl;
+                } else {
+                    delete result;
                 }
             }
             break;
@@ -565,7 +572,7 @@ void heapDoubleOperations(Heap<double>* heap, std::vector<Heap<double>*>& double
             else {
                 std::cout << "\tResult: " << std::endl;
                 std::cout << *result << std::endl;
-                std::cout << "Save this heap?" << std::endl;
+                std::cout << "\tSave this heap?" << std::endl;
                 std::cout << "\t\t1| Yes\n"
                           << "\t\t0| No\n";
                 std::cout << "\t\t: ";
@@ -573,6 +580,8 @@ void heapDoubleOperations(Heap<double>* heap, std::vector<Heap<double>*>& double
                 if (choice) {
                     doubleHeap.emplace_back(result);
                     std::cout << "\t\t\x1B[92mSuccess\033[0m" << std::endl;
+                } else {
+                    delete result;
                 }
             }
             break;
@@ -663,7 +672,7 @@ void heapComplexOperations(Heap<Complex>* heap, std::vector<Heap<Complex>*>& com
             else {
                 std::cout << "\tResult: " << std::endl;
                 result->print();
-                std::cout << "Save this heap?" << std::endl;
+                std::cout << "\tSave this heap?" << std::endl;
                 std::cout << "\t\t1| Yes\n"
                           << "\t\t0| No\n";
                 std::cout << "\t\t: ";
@@ -671,6 +680,8 @@ void heapComplexOperations(Heap<Complex>* heap, std::vector<Heap<Complex>*>& com
                 if (choice) {
                     complexHeap.emplace_back(result);
                     std::cout << "\t\t\x1B[92mSuccess\033[0m" << std::endl;
+                } else {
+                    delete result;
                 }
             }
             break;
@@ -688,6 +699,633 @@ void heapComplexOperations(Heap<Complex>* heap, std::vector<Heap<Complex>*>& com
             std::string path;
             std::cin >> path;
             heap->insertFromFile(path);
+            std::cout << "\t\t\x1B[92mSuccess\033[0m" << std::endl;
+            break;
+        }
+        default : {
+            return;
+            break;
+        }
+    }
+}
+
+//
+//          BINARY SEARCH TREE
+//
+
+void binaryTreeMenu() {
+    std::vector<BinaryTree<int>*> intTree;
+    std::vector<BinaryTree<double>*> doubleTree;
+    std::vector<BinaryTree<Complex>*> complexTree;
+
+    bool flag = true;
+
+    while (flag) {
+        int type = getType();
+        switch (type) {
+            case (1): {
+                treeMenuInt(intTree);
+                break;
+            }
+            case (2): {
+                treeMenuDouble(doubleTree);
+                break;
+            }
+            case (3): {
+                treeMenuComplex(complexTree);
+                break;
+            }
+            default:
+                flag = false;
+                break;
+        }
+    }
+    for(auto& tree : intTree)
+        delete tree;
+    for(auto& tree : doubleTree)
+        delete tree;
+    for(auto& tree : complexTree)
+        delete tree;
+}
+
+void treeMenuInt(std::vector<BinaryTree<int>*>& intTree) {
+    while(true) {
+        std::cout << "\tChoose option:\n"
+                  << "\t\t1| Add tree\n"
+                  << "\t\t2| Choose operation\n"
+                  << "\t\t3| Print trees\n"
+                  << "\t\t4| Tests\n"
+                  << "\t\t5| Delete\n"
+                  << "\t\t0| exit\n"
+                  << "\t\t: ";
+        int choice = getInt(0, 5);
+        switch (choice) {
+            case (1): {
+                int num;
+                std::cout << "\t\tEnter number of elements: ";
+                std::cin >> num;
+                int* arr = new int[num];
+
+                for (int i = 0; i < num; i++) {
+                    std::cout << "\t\tEnter [" << i << "] element: ";
+                    std::cin >> arr[i];
+                }
+                BinaryTree<int>* tmp = new BinaryTree(arr, num);
+                intTree.emplace_back(tmp);
+                std::cout << "\t\t\x1B[92mSuccess\033[0m" << std::endl;
+                delete[] arr;
+                break;
+            }
+            case (2): {
+                if (!intTree.size()) {
+                    std::cout << "\t\t\x1B[91mYou haven't have any trees yet.\033[0m" << std::endl;
+                    break;
+                }
+                std::cout << "\tYou have " << intTree.size()
+                          << " trees. Choose the index of tree to print"
+                          << std::endl;
+                std::cout << "\t\t: ";
+                int index = getInt(0, intTree.size() - 1);
+
+                treeIntOperations(intTree.at(index), intTree);
+
+                break;
+            }
+            case (3): {
+                if (!intTree.size()) {
+                    std::cout << "\t\t\x1B[91mYou haven't have any trees yet.\033[0m" << std::endl;
+                    break;
+                }
+                std::cout << "\tYou have " << intTree.size()
+                          << " trees. Choose the index of tree to print"
+                          << std::endl;
+                std::cout << "\t\t: ";
+                int index = getInt(0, intTree.size() - 1);
+
+                std::cout << *(intTree[index]) << std::endl;
+
+                break;
+            }
+            case (4): {
+                // ... Tests
+                break;
+            }
+            case (5): {
+                if (!intTree.size()) {
+                    std::cout << "\tx1B[91mYou haven't have any trees yet.\033[0m" << std::endl;
+                    break;
+                }
+                std::cout << "\tYou have " << intTree.size()
+                          << " trees. Choose the index of tree to delete"
+                          << std::endl;
+                std::cout << "\t\t: ";
+                int index = getInt(0, intTree.size() - 1);
+                std::cout << "\t\x1B[91mDelete\033[0m " << index << " \x1B[91mtree?\033[0m" << std::endl;
+                std::cout << "\t\t1| Yes\n"
+                          << "\t\t0| No\n";
+                std::cout << "\t\t: ";
+                int lastChoice = getInt(0, 1);
+                if (lastChoice) {
+                    delete intTree.at(index);
+                    intTree.erase(intTree.begin() + index);
+                    std::cout << "\t\t\x1B[92mSuccess\033[0m" << std::endl;
+                }
+                break;
+            }
+            default:
+                return;
+        }
+
+
+
+
+        break;
+    }
+}
+
+void treeMenuDouble(std::vector<BinaryTree<double>*>& doubleTree) {
+    while(true) {
+        std::cout << "\tChoose option:\n"
+                  << "\t\t1| Add tree\n"
+                  << "\t\t2| Choose operation\n"
+                  << "\t\t3| Print trees\n"
+                  << "\t\t4| Tests\n"
+                  << "\t\t5| Delete\n"
+                  << "\t\t0| exit\n"
+                  << "\t\t: ";
+        int choice = getInt(0, 5);
+        switch (choice) {
+            case (1): {
+                int num;
+                std::cout << "\t\tEnter number of elements: ";
+                std::cin >> num;
+                double* arr = new double[num];
+
+                for (int i = 0; i < num; i++) {
+                    std::cout << "\t\tEnter [" << i << "] element: ";
+                    std::cin >> arr[i];
+                }
+                BinaryTree<double>* tmp = new BinaryTree(arr, num);
+                doubleTree.emplace_back(tmp);
+                std::cout << "\t\t\x1B[92mSuccess\033[0m" << std::endl;
+                delete[] arr;
+                break;
+            }
+            case (2): {
+                if (!doubleTree.size()) {
+                    std::cout << "\t\t\x1B[91mYou haven't have any trees yet.\033[0m" << std::endl;
+                    break;
+                }
+                std::cout << "\tYou have " << doubleTree.size()
+                          << " trees. Choose the index of tree to print"
+                          << std::endl;
+                std::cout << "\t\t: ";
+                int index = getInt(0, doubleTree.size() - 1);
+
+                treeDoubleOperations(doubleTree.at(index), doubleTree); // here
+                break;
+            }
+            case (3): {
+                if (!doubleTree.size()) {
+                    std::cout << "\t\t\x1B[91mYou haven't have any trees yet.\033[0m" << std::endl;
+                    break;
+                }
+                std::cout << "\tYou have " << doubleTree.size()
+                          << " trees. Choose the index of tess to print"
+                          << std::endl;
+                std::cout << "\t\t: ";
+                int index = getInt(0, doubleTree.size() - 1);
+
+                std::cout << *(doubleTree[index]) << std::endl;
+
+                break;
+            }
+            case (4): {
+                // ... Tests
+                break;
+            }
+            case (5): {
+                if (!doubleTree.size()) {
+                    std::cout << "\tx1B[91mYou haven't have any trees yet.\033[0m" << std::endl;
+                    break;
+                }
+                std::cout << "\tYou have " << doubleTree.size()
+                          << " trees. Choose the index of tree to delete"
+                          << std::endl;
+                std::cout << "\t\t: ";
+                int index = getInt(0, doubleTree.size() - 1);
+                std::cout << "\t\x1B[91mDelete\033[0m " << index << " \x1B[91mtree?\033[0m" << std::endl;
+                std::cout << "\t\t1| Yes\n"
+                          << "\t\t0| No\n";
+                std::cout << "\t\t: ";
+                int lastChoice = getInt(0, 1);
+                if (lastChoice) {
+                    delete doubleTree.at(index);
+                    doubleTree.erase(doubleTree.begin() + index);
+                    std::cout << "\t\t\x1B[92mSuccess\033[0m" << std::endl;
+                }
+                break;
+            }
+            default:
+                return;
+        }
+
+
+
+
+        break;
+    }
+}
+
+void treeMenuComplex(std::vector<BinaryTree<Complex>*>& complexTree) {
+    while(true) {
+        std::cout << "\tChoose option:\n"
+                  << "\t\t1| Add tree\n"
+                  << "\t\t2| Choose operation\n"
+                  << "\t\t3| Print trees\n"
+                  << "\t\t4| Tests\n"
+                  << "\t\t5| Delete\n"
+                  << "\t\t0| exit\n"
+                  << "\t\t: ";
+        int choice = getInt(0, 5);
+        switch (choice) {
+            case (1): {
+                int num;
+                std::cout << "\t\tEnter number of elements: ";
+                std::cin >> num;
+                Complex* arr = new Complex[num];
+
+                for (int i = 0; i < num; i++) {
+                    std::cout << "\t\tEnter [" << i << "] element: ";
+                    arr[i] = getComplex();
+                }
+                BinaryTree<Complex>* tmp = new BinaryTree(arr, num);
+                complexTree.emplace_back(tmp);
+                std::cout << "\t\t\x1B[92mSuccess\033[0m" << std::endl;
+                delete[] arr;
+                break;
+            }
+            case (2): {
+                if (!complexTree.size()) {
+                    std::cout << "\t\t\x1B[91mYou haven't have any trees yet.\033[0m" << std::endl;
+                    break;
+                }
+                std::cout << "\tYou have " << complexTree.size()
+                          << " trees. Choose the index of tree to print"
+                          << std::endl;
+                std::cout << "\t\t: ";
+                int index = getInt(0, complexTree.size() - 1);
+
+                treeComplexOperations(complexTree.at(index), complexTree);
+
+                break;
+            }
+            case (3): {
+                if (!complexTree.size()) {
+                    std::cout << "\t\t\x1B[91mYou haven't have any trees yet.\033[0m" << std::endl;
+                    break;
+                }
+                std::cout << "\tYou have " << complexTree.size()
+                          << " trees. Choose the index of tree to print"
+                          << std::endl;
+                std::cout << "\t\t: ";
+                int index = getInt(0, complexTree.size() - 1);
+
+
+                (complexTree[index])->print();
+//                printComplex(complexHeap[index]);
+
+                break;
+            }
+            case (4): {
+                // ... Tests
+                break;
+            }
+            case (5): {
+                if (!complexTree.size()) {
+                    std::cout << "\tx1B[91mYou haven't have any trees yet.\033[0m" << std::endl;
+                    break;
+                }
+                std::cout << "\tYou have " << complexTree.size()
+                          << " tree. Choose the index of trees to delete"
+                          << std::endl;
+                std::cout << "\t\t: ";
+                int index = getInt(0, complexTree.size() - 1);
+                std::cout << "\t\x1B[91mDelete\033[0m " << index << " \x1B[91mtree?\033[0m" << std::endl;
+                std::cout << "\t\t1| Yes\n"
+                          << "\t\t0| No\n";
+                std::cout << "\t\t: ";
+                int lastChoice = getInt(0, 1);
+                if (lastChoice) {
+                    delete complexTree.at(index);
+                    complexTree.erase(complexTree.begin() + index);
+                    std::cout << "\t\t\x1B[92mSuccess\033[0m" << std::endl;
+                }
+                break;
+            }
+            default:
+                return;
+        }
+
+
+
+
+        break;
+    }
+}
+
+
+
+void treeIntOperations(BinaryTree<int>* tree, std::vector<BinaryTree<int>*>& intTree) {
+    std::cout << "\tChoose option:\n"
+              << "\t\t1| Insert item\n"
+              << "\t\t2| Remove item\n"
+              << "\t\t3| Search item\n"
+              << "\t\t4| Search sub tree\n"
+              << "\t\t5| Cut tree\n"
+              << "\t\t6| Write to file\n"
+              << "\t\t7| Insert from file\n"
+              << "\t\t0| exit\n"
+              << "\t\t: ";
+    int choice = getInt(0, 7);
+    switch (choice) {
+        case(1) : {
+            std::cout << "\t\tEnter value: ";
+            int value;
+            std::cin >> value;
+            tree->insert(value);
+            std::cout << "\t\t\x1B[92mSuccess\033[0m" << std::endl;
+            break;
+        }
+        case(2) : {
+            std::cout << "\t\tEnter value: ";
+            int value;
+            std::cin >> value;
+            tree->remove(value);
+            std::cout << "\t\t\x1B[92mSuccess\033[0m" << std::endl;
+            break;
+        }
+        case(3) : {
+            std::cout << "\t\tEnter value: ";
+            int value;
+            std::cin >> value;
+            bool result = tree->searchItem(value);
+            if (result)
+                std::cout << "\t\t\x1B[92mItem exists\033[0m" << std::endl;
+            else
+                std::cout << "\t\t\x1B[91mItem doesn't exist\033[0m" << std::endl;
+            break;
+        }
+        case(4) : {
+            std::cout << "\tYou have " << intTree.size()
+                      << " trees.\n\tChoose the index of tree for searching it in this tree."
+                      << std::endl;
+            std::cout << "\t\t: ";
+            int index = getInt(0, intTree.size() - 1);
+            bool result = tree->searchTree(*(intTree.at(index)));
+            if (result)
+                std::cout << "\t\t\x1B[92mThis tree exists\033[0m" << std::endl;
+            else
+                std::cout << "\t\t\x1B[91mThis tree doesn't exist\033[0m" << std::endl;
+            break;
+        }
+        case(5) : {
+            std::cout << "\t\tEnter value: ";
+            int value;
+            std::cin >> value;
+            BinaryTree<int>* result = tree->cut(value);
+            if (!result)
+                std::cout << "\t\t\x1B[91mItem with this value doesn't exist\033[0m" << std::endl;
+            else {
+                std::cout << "\tResult: " << std::endl;
+                std::cout << *result << std::endl;
+                std::cout << "\tSave this tree?" << std::endl;
+                std::cout << "\t\t1| Yes\n"
+                          << "\t\t0| No\n";
+                std::cout << "\t\t: ";
+                int choice = getInt(0, 1);
+                if (choice) {
+                    intTree.emplace_back(result);
+                    std::cout << "\t\t\x1B[92mSuccess\033[0m" << std::endl;
+                } else {
+                    delete result;
+                }
+            }
+            break;
+        }
+        case(6) : {
+            std::cout << "\t\tEnter file path: ";
+            std::string path;
+            std::cin >> path;
+            tree->writeToFile(path);
+            std::cout << "\t\t\x1B[92mSuccess\033[0m" << std::endl;
+            break;
+        }
+        case(7) : {
+            std::cout << "\t\tEnter file path: ";
+            std::string path;
+            std::cin >> path;
+            tree->insertFromFile(path);
+            std::cout << "\t\t\x1B[92mSuccess\033[0m" << std::endl;
+            break;
+        }
+        default : {
+            return;
+            break;
+        }
+    }
+}
+
+void treeDoubleOperations(BinaryTree<double>* tree, std::vector<BinaryTree<double>*>& doubleTree) {
+    std::cout << "\tChoose option:\n"
+              << "\t\t1| Insert item\n"
+              << "\t\t2| Remove item\n"
+              << "\t\t3| Search item\n"
+              << "\t\t4| Search sub tree\n"
+              << "\t\t5| Cut tree\n"
+              << "\t\t6| Write to file\n"
+              << "\t\t7| Insert from file\n"
+              << "\t\t0| exit\n"
+              << "\t\t: ";
+    int choice = getInt(0, 7);
+    switch (choice) {
+        case(1) : {
+            std::cout << "\t\tEnter value: ";
+            double value;
+            std::cin >> value;
+            tree->insert(value);
+            std::cout << "\t\t\x1B[92mSuccess\033[0m" << std::endl;
+            break;
+        }
+        case(2) : {
+            std::cout << "\t\tEnter value: ";
+            double value;
+            std::cin >> value;
+            tree->remove(value);
+            std::cout << "\t\t\x1B[92mSuccess\033[0m" << std::endl;
+            break;
+        }
+        case(3) : {
+            std::cout << "\t\tEnter value: ";
+            double value;
+            std::cin >> value;
+            bool result = tree->searchItem(value);
+            if (result)
+                std::cout << "\t\t\x1B[92mItem exists\033[0m" << std::endl;
+            else
+                std::cout << "\t\t\x1B[91mItem doesn't exist\033[0m" << std::endl;
+            break;
+        }
+        case(4) : {
+            std::cout << "\tYou have " << doubleTree.size()
+                      << " trees.\n\tChoose the index of tree for searching it in this tree."
+                      << std::endl;
+            std::cout << "\t\t: ";
+            int index = getInt(0, doubleTree.size() - 1);
+            bool result = tree->searchTree(*(doubleTree.at(index)));
+            if (result)
+                std::cout << "\t\t\x1B[92mThis tree exists\033[0m" << std::endl;
+            else
+                std::cout << "\t\t\x1B[91mThis tree doesn't exist\033[0m" << std::endl;
+            break;
+        }
+        case(5) : {
+            std::cout << "\t\tEnter value: ";
+            double value;
+            std::cin >> value;
+            BinaryTree<double>* result = tree->cut(value);
+            if (!result)
+                std::cout << "\t\t\x1B[91mItem with this value doesn't exist\033[0m" << std::endl;
+            else {
+                std::cout << "\tResult: " << std::endl;
+                std::cout << *result << std::endl;
+                std::cout << "\tSave this tree?" << std::endl;
+                std::cout << "\t\t1| Yes\n"
+                          << "\t\t0| No\n";
+                std::cout << "\t\t: ";
+                int choice = getInt(0, 1);
+                if (choice) {
+                    doubleTree.emplace_back(result);
+                    std::cout << "\t\t\x1B[92mSuccess\033[0m" << std::endl;
+                } else {
+                    delete result;
+                }
+            }
+            break;
+        }
+        case(6) : {
+            std::cout << "\t\tEnter file path: ";
+            std::string path;
+            std::cin >> path;
+            tree->writeToFile(path);
+            std::cout << "\t\t\x1B[92mSuccess\033[0m" << std::endl;
+            break;
+        }
+        case(7) : {
+            std::cout << "\t\tEnter file path: ";
+            std::string path;
+            std::cin >> path;
+            tree->insertFromFile(path);
+            std::cout << "\t\t\x1B[92mSuccess\033[0m" << std::endl;
+            break;
+        }
+        default : {
+            return;
+            break;
+        }
+    }
+}
+
+void treeComplexOperations(BinaryTree<Complex>* tree, std::vector<BinaryTree<Complex>*>& complexTree) {
+    std::cout << "\tChoose option:\n"
+              << "\t\t1| Insert item\n"
+              << "\t\t2| Remove item\n"
+              << "\t\t3| Search item\n"
+              << "\t\t4| Search sub tree\n"
+              << "\t\t5| Cut tree\n"
+              << "\t\t6| Write to file\n"
+              << "\t\t7| Insert from file\n"
+              << "\t\t0| exit\n"
+              << "\t\t: ";
+    int choice = getInt(0, 7);
+    switch (choice) {
+        case(1) : {
+            std::cout << "\t\tEnter value: ";
+            Complex value;
+            value = getComplex();
+            tree->insert(value);
+            std::cout << "\t\t\x1B[92mSuccess\033[0m" << std::endl;
+            break;
+        }
+        case(2) : {
+            std::cout << "\t\tEnter value: ";
+            Complex value;
+            value = getComplex();
+            tree->remove(value);
+            std::cout << "\t\t\x1B[92mSuccess\033[0m" << std::endl;
+            break;
+        }
+        case(3) : {
+            std::cout << "\t\tEnter value: ";
+            Complex value;
+            value = getComplex();
+            bool result = tree->searchItem(value);
+            if (result)
+                std::cout << "\t\t\x1B[92mItem exists\033[0m" << std::endl;
+            else
+                std::cout << "\t\t\x1B[91mItem doesn't exist\033[0m" << std::endl;
+            break;
+        }
+        case(4) : {
+            std::cout << "\tYou have " << complexTree.size()
+                      << " trees.\n\tChoose the index of tree for searching it in this tree."
+                      << std::endl;
+            std::cout << "\t\t: ";
+            int index = getInt(0, complexTree.size() - 1);
+            bool result = tree->searchTree(*(complexTree.at(index)));
+            if (result)
+                std::cout << "\t\t\x1B[92mThis tree exists\033[0m" << std::endl;
+            else
+                std::cout << "\t\t\x1B[91mThis tree doesn't exist\033[0m" << std::endl;
+            break;
+        }
+        case(5) : {
+            std::cout << "\t\tEnter value: ";
+            Complex value;
+            value = getComplex();
+            BinaryTree<Complex>* result = tree->cut(value);
+            if (!result)
+                std::cout << "\t\t\x1B[91mItem with this value doesn't exist\033[0m" << std::endl;
+            else {
+                std::cout << "\tResult: " << std::endl;
+                result->print();
+                std::cout << "\tSave this tree?" << std::endl;
+                std::cout << "\t\t1| Yes\n"
+                          << "\t\t0| No\n";
+                std::cout << "\t\t: ";
+                int choice = getInt(0, 1);
+                if (choice) {
+                    complexTree.emplace_back(result);
+                    std::cout << "\t\t\x1B[92mSuccess\033[0m" << std::endl;
+                } else {
+                    delete result;
+                }
+            }
+            break;
+        }
+        case(6) : {
+            std::cout << "\t\tEnter file path: ";
+            std::string path;
+            std::cin >> path;
+            tree->writeToFile(path);
+            std::cout << "\t\t\x1B[92mSuccess\033[0m" << std::endl;
+            break;
+        }
+        case(7) : {
+            std::cout << "\t\tEnter file path: ";
+            std::string path;
+            std::cin >> path;
+            tree->insertFromFile(path);
             std::cout << "\t\t\x1B[92mSuccess\033[0m" << std::endl;
             break;
         }

@@ -59,6 +59,7 @@ public:
     BinaryTree<T>* writeToFile(std::string&& path);
     BinaryTree<T>* insertFromFile(std::string& path);
     BinaryTree<T>* insertFromFile(std::string&& path);
+    BinaryTree<T>& print();
 
 private:
     M_Node* insert(M_Node* node, M_Node* parent, T& item);

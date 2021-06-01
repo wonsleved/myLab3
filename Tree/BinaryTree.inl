@@ -314,6 +314,13 @@ BinaryTree<T>* BinaryTree<T>::insertFromFile(std::string&& path) {
     return insertFromFile(path);
 }
 
+template <typename T>
+BinaryTree<T>& BinaryTree<T>::print() {
+    preOrderTravers(m_root, [](T item){
+        item.cout();
+    });
+    return *this;
+}
 
 //
 //          PRIVATE

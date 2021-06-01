@@ -327,7 +327,6 @@ Heap<T>& Heap<T>::preOrderTravers(int index, std::function<void(T*)> func) {
 template <typename T>
 Heap<T>& Heap<T>::print() {
     preOrderTravers(0, [](T* item){
-//        std::cout << (*item) << std::endl;
         item->cout();
     });
     return *this;
