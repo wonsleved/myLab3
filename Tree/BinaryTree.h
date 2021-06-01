@@ -50,7 +50,7 @@ public:
     BinaryTree<T>* remove(T&& item);
     BinaryTree<T>* map(T (*function)(const T& item));
     BinaryTree<T>* filter(bool (*function)(const T& item));
-    BinaryTree<T>* cutTree(T& item);
+    BinaryTree<T>* cut(T& item);
     T reduce(T (*function)(const T& previousValue, const T& currentValue));
 
     const M_Node& getRoot();

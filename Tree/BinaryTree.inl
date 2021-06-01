@@ -59,7 +59,7 @@ BinaryTree<T>& BinaryTree<T>::insert(T& item) {
 }
 
 template <typename T>
-typename BinaryTree<T>::M_Node* BinaryTree<T>::insert(M_Node* node, M_Node* parent,T& item) {
+typename BinaryTree<T>::M_Node* BinaryTree<T>::insert(M_Node* node, M_Node* parent, T& item) {
     if (!node)
         return new M_Node(parent, item);
 
@@ -142,7 +142,7 @@ BinaryTree<T>* BinaryTree<T>::filter(bool (*function)(const T& item)) {
 }
 
 template <typename T>
-BinaryTree<T>* BinaryTree<T>::cutTree(T& item) {
+BinaryTree<T>* BinaryTree<T>::cut(T& item) {
     M_Node* node = getNode(item);
     if (node == nullptr)
         return nullptr;
