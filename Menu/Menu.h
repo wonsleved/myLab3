@@ -20,5 +20,6 @@ int getType();
 int getDataStruct();
 
 void heapMenuInt(std::vector<Heap<int>*>& intHeap);
+void heapIntOperations(Heap<int>* heap, std::vector<Heap<int>*>& intHeap);
 
 #endif

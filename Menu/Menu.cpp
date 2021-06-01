@@ -133,7 +133,18 @@ void heapMenuInt(std::vector<Heap<int>*>& intHeap) {
                 break;
             }
             case (2): {
-                // ... Operations
+                if (!intHeap.size()) {
+                    std::cout << "\t\t\x1B[91mYou haven't have any heaps yet.\033[0m" << std::endl;
+                    break;
+                }
+                std::cout << "\tYou have " << intHeap.size()
+                          << " heaps. Choose the index of heap to print"
+                          << std::endl;
+                std::cout << "\t\t: ";
+                int index = getInt(0, intHeap.size() - 1);
+
+                heapIntOperations(intHeap.at(index), intHeap);
+
                 break;
             }
             case (3): {
@@ -185,5 +196,68 @@ void heapMenuInt(std::vector<Heap<int>*>& intHeap) {
 
 
         break;
+    }
+}
+
+void heapIntOperations(Heap<int>* heap, std::vector<Heap<int>*>& intHeap) {
+    std::cout << "\tChoose option:\n"
+              << "\t\t1| Insert item\n"
+              << "\t\t2| Remove item\n"
+              << "\t\t3| Search item\n"
+              << "\t\t4| Search sub heap\n"
+              << "\t\t5| Cut heap\n"
+              << "\t\t6| Write to file\n"
+              << "\t\t7| Insert from file\n"
+              << "\t\t0| exit\n"
+              << "\t\t: ";
+    int choice = getInt(0, 7);
+    switch (choice) {
+        case(1) : {
+            std::cout << "\t\tEnter value: ";
+            int value;
+            std::cin >> value;
+            heap->insert(value);
+            std::cout << "\t\t\x1B[92mSuccess\033[0m" << std::endl;
+            break;
+        }
+        case(2) : {
+            std::cout << "\t\tEnter value: ";
+            int value;
+            std::cin >> value;
+            heap->remove(value);
+            std::cout << "\t\t\x1B[92mSuccess\033[0m" << std::endl;
+            break;
+        }
+        case(3) : {
+            std::cout << "\t\tEnter value: ";
+            int value;
+            std::cin >> value;
+            bool result = heap->searchItem(value);
+            if (result)
+                std::cout << "\t\t\x1B[92mItem exists\033[0m" << std::endl;
+            else
+                std::cout << "\t\t\x1B[91mItem doesn't exist\033[0m" << std::endl;
+            break;
+        }
+        case(4) : {
+            // ...
+            break;
+        }
+        case(5) : {
+            // ...
+            break;
+        }
+        case(6) : {
+            // ...
+            break;
+        }
+        case(7) : {
+            // ...
+            break;
+        }
+        default : {
+            // ...
+            break;
+        }
     }
 }
