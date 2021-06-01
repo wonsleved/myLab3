@@ -7,6 +7,18 @@
 //void menuFloat();
 //void menuComplex();
 //void PrintMenu();
-//void menu();
+void menu();
+
+void heapMenu();
+void binaryTreeMenu();
+
+int getInt();
+int getInt(int up);
+int getInt(int down, int up);
+int getType();
+
+int getDataStruct();
+
+void heapMenuInt(std::vector<Heap<int>*>& intHeap);
 
 #endif

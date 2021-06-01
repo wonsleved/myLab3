@@ -45,7 +45,6 @@ public:
     bool searchSubHeap(Heap<T>& another);
     bool searchSubHeap(Heap<T>&& another);
 
-    void print();
     int getSize();
 
     Heap<T>* writeToFile(std::string& path);
