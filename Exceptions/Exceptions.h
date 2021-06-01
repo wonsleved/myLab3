@@ -5,6 +5,7 @@
 
 namespace ExceptionConsts {
     const std::string ITEM_EXISTS = "Item is already exist!";
+    const std::string FILE_ERROR  = "Something went wrong with file!";
 }
 
 class Exceptions

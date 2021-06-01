@@ -39,6 +39,8 @@ Heap<T>::Heap(Heap<T>& another) : Heap() {
 
 template <typename T>
 Heap<T>& Heap<T>::insert(T& item) {
+    if (searchItem(item))
+        throw(Exceptions(ExceptionConsts::ITEM_EXISTS));
     if (m_size == 0)  {
         m_data = new T[1];
         m_data[0] = item;
@@ -55,7 +57,6 @@ Heap<T>& Heap<T>::insert(T& item) {
                 flag = true;
                 i--;
             }
-//            std::cout << j << " " << result[j] << " " << i << " " << m_data[i] << std::endl;
         }
         if (m_data)
             delete[] m_data;// if items are equal throw exc
@@ -128,11 +129,6 @@ Heap<T>* Heap<T>::cut(T&& item) {
     return cut(item);
 }
 
-template <typename T>
-void Heap<T>::print() {
-    for (int i = 0; i < m_size; i++)
-        std::cout << m_data[i] << " " << std::endl;
-}
 
 template <typename T>
 int Heap<T>::getSize() {
@@ -147,14 +143,14 @@ bool Heap<T>::searchSubHeap(Heap<T>& another) {
         return true;
     int i;
 
-//    for (i = 0; i < m_size; i++)
-//        if (m_data[i] == another.m_data[0])
-//            break;
-//    if (i == m_size)
-//        return false;
-//    for (int j = i; j - i < another.m_size; j++)
-//        if (m_data[j] != another.m_data[j - i])
-//            return false;
+    for (i = 0; i < m_size; i++)
+        if (m_data[i] == another.m_data[0])
+            break;
+
+
+    if (i == m_size)
+        return false;
+
 
     return searchSubHeapDev(i, 0, another);;
 }
@@ -165,28 +161,67 @@ bool Heap<T>::searchSubHeap(Heap<T>&& another) {
 }
 
 template <typename T>
-bool Heap<T>::searchSubHeapDev(int destination, int source, Heap<T>& another) {
-    bool result;
-    if (source >= another.m_size) {
-        return true;
+Heap<T>* Heap<T>::writeToFile(std::string& path) {
+    std::ofstream wf(path, std::ios::out | std::ios::binary);
+    if(!wf) {
+        throw(Exceptions(ExceptionConsts::FILE_ERROR));
+        return nullptr;
     }
-    else if (m_size >= destination) {
-        return false;
+
+    wf.write((char *)& m_size, sizeof(int));
+
+    for (int i = 0; i < m_size; i++) {
+        wf.write((char *)& m_data[i], sizeof(T));
     }
-    else {
-        if (m_data[destination] == another.m_data[source]) {
-            if (
-                    searchSubHeapDev(getLeftChild(destination), getLeftChild(source), another) &&
-                    searchSubHeapDev(getRightChild(destination), getRightChild(source), another ) )
-            {
-                return true;
-            }
-        }
-        result = searchSubHeapDev(getLeftChild(destination), source, another) ||
-                 searchSubHeapDev(getRightChild(destination), source, another);
+    wf.close();
+    if(!wf.good()) {
+        throw(Exceptions(ExceptionConsts::FILE_ERROR));
+        return nullptr;
     }
-    return result;
+    return this;
 }
+
+template <typename T>
+Heap<T>* Heap<T>::writeToFile(std::string&& path) {
+    return writeToFile(path);
+}
+
+template <typename T>
+Heap<T>* Heap<T>::insertFromFile(std::string& path) {
+    std::ifstream rf(path, std::ios::out | std::ios::binary);
+    if(!rf) {
+        throw(Exceptions(ExceptionConsts::FILE_ERROR));
+        return nullptr;
+    }
+
+    int size = 0;
+    rf.read((char *) &size, sizeof(int));
+    T* tmp = new T;
+    for (int i = 0; i < size; i++) {
+        rf.read((char *) tmp, sizeof(T));
+        insert(*tmp);
+    }
+
+
+    delete tmp;
+
+
+    rf.close();
+    if(!rf.good()) {
+        throw(Exceptions(ExceptionConsts::FILE_ERROR));
+        return nullptr;
+    }
+    return this;
+}
+
+template <typename T>
+Heap<T>* Heap<T>::insertFromFile(std::string&& path) {
+    return insertFromFile(path);
+}
+
+//
+//          PRIVATE
+//
 
 template <typename T>
 void Heap<T>::quickSort(T* array, int low, int high) {
@@ -229,6 +264,31 @@ int Heap<T>::getHeight(int index) const{
 }
 
 template <typename T>
+bool Heap<T>::searchSubHeapDev(int destination, int source, Heap<T>& another) {
+    bool result;
+    if (source >= another.m_size) {
+        return true;
+    }
+    else if (m_size <= destination) {
+        return false;
+    }
+    else {
+
+        if (m_data[destination] == another.m_data[source]) {
+            if (
+                    searchSubHeapDev(getLeftChild(destination), getLeftChild(source), another) &&
+                    searchSubHeapDev(getRightChild(destination), getRightChild(source), another ) )
+            {
+                return true;
+            }
+        }
+        result = searchSubHeapDev(getLeftChild(destination), source, another) ||
+                 searchSubHeapDev(getRightChild(destination), source, another);
+    }
+    return result;
+}
+
+template <typename T>
 int Heap<T>::getRightChild(int index) const{
 //    if (index < 0 || index >= m_size)
 //        return -1;
@@ -258,9 +318,6 @@ Heap<T>& Heap<T>::preOrderTravers(int index, std::function<void(T*)> func) {
     }
     return *this;
 }
-
-
-
 
 
 //

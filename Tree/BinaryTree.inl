@@ -52,6 +52,8 @@ BinaryTree<T>& BinaryTree<T>::insert(T& item) {
     if (!m_root) {
         m_root = new BinaryTree::M_Node(nullptr, item);
     } else {
+        if (searchItem(item))
+            throw(Exceptions(ExceptionConsts::ITEM_EXISTS));
         insert(m_root, nullptr, item);
     }
     // is Balanced
@@ -62,6 +64,7 @@ template <typename T>
 typename BinaryTree<T>::M_Node* BinaryTree<T>::insert(M_Node* node, M_Node* parent, T& item) {
     if (!node)
         return new M_Node(parent, item);
+
 
     if (item < node->data)
         node->leftChild = insert(node->leftChild, node, item);
@@ -254,16 +257,15 @@ template <typename T>
 BinaryTree<T>* BinaryTree<T>::writeToFile(std::string& path) {
     std::ofstream wf(path, std::ios::out | std::ios::binary);
     if(!wf) {
-        std::cout << "Cannot open file!" << std::endl; // throw exc
+        throw(Exceptions(ExceptionConsts::FILE_ERROR));
         return nullptr;
     }
     preOrderTravers(m_root, [&wf](T item){
-        std::cout << item << std::endl; // trow exc
         wf.write((char *)& item, sizeof(T));
     });
     wf.close();
     if(!wf.good()) {
-        std::cout << "Error occurred at writing time!" << std::endl; // trow exc
+        throw(Exceptions(ExceptionConsts::FILE_ERROR));
         return nullptr;
     }
     return this;
@@ -278,7 +280,7 @@ template <typename T>
 BinaryTree<T>* BinaryTree<T>::insertFromFile(std::string& path) {
     std::ifstream rf(path, std::ios::out | std::ios::binary);
     if(!rf) {
-        std::cout << "Cannot open file!" << std::endl;
+        throw(Exceptions(ExceptionConsts::FILE_ERROR));
         return nullptr;
     }
 
@@ -291,7 +293,6 @@ BinaryTree<T>* BinaryTree<T>::insertFromFile(std::string& path) {
 
     while (length > 0) {
         rf.read((char *) tmp, sizeof(T));
-        std::cout << *tmp << std::endl;
         insert(*tmp);
         length -= sizeof(T);
     }
@@ -300,7 +301,7 @@ BinaryTree<T>* BinaryTree<T>::insertFromFile(std::string& path) {
 
     rf.close();
     if(!rf.good()) {
-        std::cout << "Error occurred at reading time!" << std::endl;
+        throw(Exceptions(ExceptionConsts::FILE_ERROR));
         return nullptr;
     }
     return this;

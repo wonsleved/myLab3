@@ -5,9 +5,9 @@
 
 #include <iostream>
 #include <vector>
+#include <fstream>
 #include <string>
 #include <sstream>
-#include <random>
 #include <functional>
 #include "../Exceptions/Exceptions.h"
 
@@ -30,9 +30,6 @@ public:
 
     ~Heap();
 
-
-
-
     Heap<T>& insert(T& item);
     Heap<T>& insert(T&& item);
 
@@ -51,6 +48,11 @@ public:
     void print();
     int getSize();
 
+    Heap<T>* writeToFile(std::string& path);
+    Heap<T>* writeToFile(std::string&& path);
+    Heap<T>* insertFromFile(std::string& path);
+    Heap<T>* insertFromFile(std::string&& path);
+
 private:
     void quickSort(T* array, int low, int high);
     int getHeight(int index) const;
@@ -61,7 +63,6 @@ private:
     bool searchSubHeapDev(int destination, int source, Heap<T>& another);
 
 private:
-
     struct cellDisplay {
         string   valstr;
         bool     present;
