@@ -45,7 +45,7 @@ public:
     bool searchSubHeap(Heap<T>& another);
     bool searchSubHeap(Heap<T>&& another);
 
-//    Heap<T>& print();
+    Heap<T>& print();
 
     int getSize();
 

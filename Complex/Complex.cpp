@@ -64,6 +64,13 @@ bool Complex::operator> (const Complex another) {
 bool Complex::operator>= (const Complex another) {
     return m_real >= another.m_real;
 }
+//void Complex::print () {
+//    std::cout << getReal();
+//    if (getImage() > 0)
+//        std::cout << "+";
+//    std::cout << getImage() << "i" << std::endl;
+//}
+
 
 std::ostream& operator<< (std::ostream& out, Complex& complex) {
     out << complex.getReal();

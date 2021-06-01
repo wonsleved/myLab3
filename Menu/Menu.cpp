@@ -10,12 +10,12 @@ Complex getComplex() {
     return Complex(real, image);
 }
 
-void printComplex(Complex& comp) {
-    std::cout << comp.getReal();
-    if (comp.getImage() > 0)
-        std::cout << "+";
-    std::cout << comp.getImage() << "i" << std::endl;
-}
+//void printComplex(Heap<Complex>* comp) {
+//    std::cout << comp->getReal();
+//    if (comp->getImage() > 0)
+//        std::cout << "+";
+//    std::cout << comp->getImage() << "i" << std::endl;
+//}
 
 int getInt() {
     int a;
@@ -359,7 +359,9 @@ void heapMenuComplex(std::vector<Heap<Complex>*>& complexHeap) {
                 std::cout << "\t\t: ";
                 int index = getInt(0, complexHeap.size() - 1);
 
-                printComplex(*(complexHeap[index]));
+
+                (complexHeap[index])->print();
+//                printComplex(complexHeap[index]);
 
                 break;
             }
@@ -660,7 +662,7 @@ void heapComplexOperations(Heap<Complex>* heap, std::vector<Heap<Complex>*>& com
                 std::cout << "\t\t\x1B[91mItem with this value doesn't exist\033[0m" << std::endl;
             else {
                 std::cout << "\tResult: " << std::endl;
-                std::cout << *result << std::endl;
+                result->print();
                 std::cout << "Save this heap?" << std::endl;
                 std::cout << "\t\t1| Yes\n"
                           << "\t\t0| No\n";
