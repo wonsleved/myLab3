@@ -67,7 +67,8 @@ bool Complex::operator>= (const Complex another) {
 
 std::ostream& operator<< (std::ostream& out, Complex& complex) {
     out << complex.getReal();
-    if (complex.getImage() > 0) std::cout << "+";
-    std::cout << complex.getImage() << "i" << std::endl;
+    if (complex.getImage() > 0)
+        out << "+";
+    out << complex.getImage() << "i";
     return out;
 }

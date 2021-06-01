@@ -19,7 +19,22 @@ int getType();
 
 int getDataStruct();
 
+Complex getComplex();
+void printComplex(Complex& comp);
+
 void heapMenuInt(std::vector<Heap<int>*>& intHeap);
+void heapMenuDouble(std::vector<Heap<double>*>& doubleHeap);
+void heapMenuComplex(std::vector<Heap<Complex>*>& complexHeap);
+
+
+
+
+
 void heapIntOperations(Heap<int>* heap, std::vector<Heap<int>*>& intHeap);
+void heapDoubleOperations(Heap<double>* heap, std::vector<Heap<double>*>& doubleHeap);
+void heapComplexOperations(Heap<Complex>* heap, std::vector<Heap<Complex>*>& complexHeap);
+
+
+
 
 #endif
