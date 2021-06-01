@@ -4,6 +4,7 @@
 #include "../Tree/BinaryTree.h"
 #include "../Complex/Complex.h"
 #include "../Tree/Heap.h"
+#include "../Tests/Tests.h"
 
 void menu();
 
@@ -14,6 +15,8 @@ int getType();
 int getDataStruct();
 Complex getComplex();
 void printComplex(Complex& comp);
+
+void testAll();
 
 //
 //          HEAP

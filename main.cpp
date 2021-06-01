@@ -3,7 +3,9 @@
 #include "Tree/BinaryTree.h"
 #include "./Complex/Complex.h"
 #include "./Tree/Heap.h"
+#include "./Tests/Tests.h"
 #include "./Menu/Menu.h"
+
 
 
 int main() {

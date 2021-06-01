@@ -57,11 +57,27 @@ int getDataStruct() {
     std::cout << "\tChoose data structure: \n"
               << "\t\t1| Heap\n"
               << "\t\t2| Binary search tree\n"
+              << "\t\t3| Test all (may be dangerous)\n"
               << "\t\t0| exit\n"
               << "\t\t: ";
-    return getInt(0, 2);
+    return getInt(0, 3);
 }
 
+void testAll() {
+    BinaryTreeIntTest();
+    std::cout << std::endl;
+    BinaryTreeDoubleTest();
+    std::cout << std::endl;
+    BinaryTreeComplexTest();
+    std::cout << std::endl;
+
+    HeapTreeIntTest();
+    std::cout << std::endl;
+    HeapTreeDoubleTest();
+    std::cout << std::endl;
+    HeapTreeComplexTest();
+    std::cout << std::endl;
+}
 
 void menu() {
     while (true) {
@@ -73,6 +89,10 @@ void menu() {
             }
             case (2): {
                 binaryTreeMenu();
+                break;
+            }
+            case (3): {
+                testAll();
                 break;
             }
             default:
@@ -180,7 +200,7 @@ void heapMenuInt(std::vector<Heap<int>*>& intHeap) {
                 break;
             }
             case (4): {
-                // ... Tests
+                HeapTreeIntTest();
                 break;
             }
             case (5): {
@@ -274,7 +294,7 @@ void heapMenuDouble(std::vector<Heap<double>*>& doubleHeap) {
                 break;
             }
             case (4): {
-                // ... Tests
+                HeapTreeDoubleTest();
                 break;
             }
             case (5): {
@@ -366,12 +386,11 @@ void heapMenuComplex(std::vector<Heap<Complex>*>& complexHeap) {
 
 
                 (complexHeap[index])->print();
-//                printComplex(complexHeap[index]);
 
                 break;
             }
             case (4): {
-                // ... Tests
+                HeapTreeComplexTest();
                 break;
             }
             case (5): {
@@ -807,7 +826,7 @@ void treeMenuInt(std::vector<BinaryTree<int>*>& intTree) {
                 break;
             }
             case (4): {
-                // ... Tests
+                BinaryTreeIntTest();
                 break;
             }
             case (5): {
@@ -901,7 +920,7 @@ void treeMenuDouble(std::vector<BinaryTree<double>*>& doubleTree) {
                 break;
             }
             case (4): {
-                // ... Tests
+                BinaryTreeDoubleTest();
                 break;
             }
             case (5): {
@@ -998,7 +1017,7 @@ void treeMenuComplex(std::vector<BinaryTree<Complex>*>& complexTree) {
                 break;
             }
             case (4): {
-                // ... Tests
+                BinaryTreeComplexTest();
                 break;
             }
             case (5): {
